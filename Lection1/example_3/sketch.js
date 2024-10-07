@@ -5,8 +5,7 @@ let flying_nlo = {
     height: 100,
     color_1: '#AFF0F0',
     color_2: '#969696',
-    
-    
+
     draw_signal: function(){
         fill(255);
         for(let i = 0; i < 10; i++)
@@ -36,27 +35,30 @@ let flying_nlo = {
         vertex(this.x + this.width/4, height - 100);
         vertex(this.x - this.width/4, height - 100);
         endShape();
-    }
-}
-let cows = [];
+    },
 
-function Cow(x, y, direction)
-{
+    // проверка на столкновение 
+    check_cow_in_beam: function(cow) {
+        return cow.x > this.x - this.width/4 && cow.x < this.x + this.width/4 && cow.y > this.y;
+    }
+};
+
+let cows = [];
+let score = 0;
+
+function Cow(x, y, direction) {
     this.x = x;
     this.y = y;
     this.direction = direction;
 
-    this.walk = function()
-    {
+    this.walk = function() {
         this.x += this.direction;
-    }
+    };
 
-    this.draw = function()
-    {
+    this.draw = function() {
         push();
         translate(this.x, this.y);
-        if (this.direction > 0)
-        {
+        if (this.direction > 0) {
             scale(-1, 1);
         }
 
@@ -73,37 +75,37 @@ function Cow(x, y, direction)
         rect(6, -10, 2, 2);
 
         pop();
-    }
+    };
 }
 
-function CowManager()
-{
-    
+function CowManager() {
     let countCows = 10;
 
-    this.update = function()
-    {
-        while(cows.length < countCows)
-        {
-            cows.push(new Cow(random(0, width) , height - 100, random(-2, 2)));
+    this.update = function() {
+        while (cows.length < countCows) {
+            cows.push(new Cow(random(0, width), height - 100, random(-2, 2)));
         }
 
-        for (let i = 0; i < cows.length; i++)
-        {
+        for (let i = 0; i < cows.length; i++) {
             cows[i].walk();
 
             if (cows[i].x > width + 100)
                 cows[i].x = 0;
-            else if (cows[i].x < - 100)
+            else if (cows[i].x < -100)
                 cows[i].x = width;
-        }
-    }
 
-    this.draw = function()
-    {
-        for(let i = 0; i < cows.length; i++)
+            // попала ли корова в луч
+            if (flying_nlo.check_cow_in_beam(cows[i])) {
+                score++;
+                cows[i].x = random(0, width);  // телепорт коровы рандом
+            }
+        }
+    };
+
+    this.draw = function() {
+        for (let i = 0; i < cows.length; i++)
             cows[i].draw();
-    }
+    };
 
     return this;
 }
@@ -114,18 +116,23 @@ function setup() {
     noStroke();
 }
 
-function draw(){
-    background(50,100, 80);
+function draw() {
+    background(50, 100, 80);
 
     let cowManager = new CowManager();
     cowManager.update();
     cowManager.draw();
 
-    fill(0,50,0);
+    fill(0, 50, 0);
     rect(0, height - 100, width, 100);
 
     flying_nlo.draw_fly();
     flying_nlo.beam();
+
+    // счётчик
+    fill(255);
+    textSize(32);
+    text("Score: " + score, 50, 50);
 
     if (keyIsDown(LEFT_ARROW))
         flying_nlo.change_pos(-4);
