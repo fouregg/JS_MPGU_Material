@@ -11,7 +11,7 @@ let pie;
 // Preload the data. This function is called automatically by the
 // gallery when a visualisation is added.
 function preload() {
-  var self = this;
+  let self = this;
   this.data = loadTable(
     './data/food/attitudes-transposed.csv', 'csv', 'header',
     // Callback function to set the value
@@ -34,9 +34,9 @@ function setup(){
   this.select.position(350, 700);
 
   // Fill the options with all company names.
-  var questions = this.data.columns;
+  let questions = this.data.columns;
   // First entry is empty.
-  for (var i = 1; i < questions.length; i++) {
+  for (let i = 1; i < questions.length; i++) {
     this.select.option(questions[i]);
   }
 }
@@ -56,19 +56,19 @@ function destroy() {
 
   // Get the value of the company we're interested in from the
   // select item.
-  var question = this.select.value();
+  let question = this.select.value();
 
   // Get the column of raw data for question.
-  var col = this.data.getColumn(question);
+  let col = this.data.getColumn(question);
 
   // Convert all data strings to numbers.
   col = stringsToNumbers(col);
 
   // Copy the row labels from the table (the first item of each row).
-  var labels = this.data.getColumn(0);
+  let labels = this.data.getColumn(0);
 
   // Colour to use for each category.
-  var colours = [
+  let colours = [
       color(0,204,0),
       color(51,255,51),
       color(255,255,51),
@@ -77,7 +77,7 @@ function destroy() {
   ];
 
   // Make a title.
-  var title = question;
+  let title = question;
 
   // Draw the pie chart!
   pie.draw(col, labels, colours, title);
